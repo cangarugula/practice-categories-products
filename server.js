@@ -1,6 +1,5 @@
-const express = require('express')
-const {Category,Product,syncAndSeed} = require('./db')
-const app = express()
+const {syncAndSeed} = require('./db')
+const app = require('./app')
 
 const port = process.env.PORT || 3000
 
