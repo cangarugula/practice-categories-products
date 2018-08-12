@@ -6,16 +6,19 @@ export default class Main extends React.Component {
     super(props)
     this.state = {
       categories: [],
-      selectedCategory: {}
+      selectedCategory: {},
+      products: []
     }
     this.selected = this.selected.bind(this)
   }
 
   async componentDidMount(){
     try {
-      let response = await axios.get('/api/categories')
+      let _categories = await axios.get('/api/categories')
+      let _products = await axios.get('/api/products')
       this.setState({
-        categories: response.data
+        categories: _categories.data,
+        products: _products.data
       })
     } catch (err) { console.log(err)}
   }
@@ -31,16 +34,23 @@ export default class Main extends React.Component {
 
   Categories ({categories,selected}) {
     return (
-      categories.map(category => {
-        return <ul>
-            <li key={category.id} onClick={()=> selected(category.id)}>{category.name}: {category.products.length}</li>
-            <hr />
-            </ul>
-      })
+      <div>
+        <div>
+          <h3>Categories</h3>
+        </div>
+        <div>{
+          categories.map(category => {
+            return <ul>
+                <li key={category.id} onClick={()=> selected(category.id)}>{category.name}: {category.products.length}</li>
+                <hr />
+                </ul>
+          })}
+        </div>
+      </div>
     )
   }
 
-  Product ({category}) {
+  SelectedCategory ({category}) {
     const products = category.products
     return (
       <div>
@@ -50,7 +60,7 @@ export default class Main extends React.Component {
         <div> {
           products.map(product => {
             return <ul>
-              <li>{product.name}</li>
+              <li key={product.id}>{product.name}</li>
               </ul>
           })}
         </div>
@@ -59,7 +69,23 @@ export default class Main extends React.Component {
         </div>
       </div>
     )
+  }
 
+  Products ({products}){
+    return (
+      <div>
+        <div>
+          <h3>Products</h3>
+        </div>
+        <div> {
+          products.map(product => {
+            return <ul>
+              <li key={product.id}>{product.name}</li>
+              </ul>
+          })}
+        </div>
+      </div>
+    )
   }
 
 
@@ -67,7 +93,12 @@ export default class Main extends React.Component {
 
     return (
       <div id='app'>
-        {this.state.selectedCategory.id ? <this.Product category={this.state.selectedCategory} /> : <this.Categories categories={this.state.categories} selected={this.selected}/>}
+        <div>
+          {this.state.selectedCategory.id ? <this.SelectedCategory category={this.state.selectedCategory} /> : <this.Categories categories={this.state.categories} selected={this.selected}/>}
+        </div>
+        <div>
+          <this.Products products={this.state.products} />
+        </div>
       </div>
 
     )
