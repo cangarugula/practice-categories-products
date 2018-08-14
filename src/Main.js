@@ -10,6 +10,8 @@ export default class Main extends React.Component {
       products: []
     }
     this.selected = this.selected.bind(this)
+    this.removeProduct = this.removeProduct.bind(this)
+    this.addProduct = this.addProduct.bind(this)
   }
 
   async componentDidMount(){
@@ -42,7 +44,6 @@ export default class Main extends React.Component {
           categories.map(category => {
             return <ul>
                 <li key={category.id} onClick={()=> selected(category.id)}>{category.name}: {category.products.length}</li>
-                <hr />
                 </ul>
           })}
         </div>
@@ -71,7 +72,28 @@ export default class Main extends React.Component {
     )
   }
 
-  Products ({products}){
+  removeProduct(id) {
+    this.setState({
+      products: this.state.products.filter(product => product.id !== id)
+    })
+  }
+
+  async addProduct(item) {
+    // try {
+    //   let response = await axios.post(`/api/add?item=${item}&category=${category}`)
+    //   console.log('this is response data', response.data)
+    // } catch (err) {
+    //   console.log(err)
+    // }
+    const product = [{name: item}]
+
+    this.setState({
+      products: this.state.products.concat(product)
+    })
+  }
+
+
+  Products ({products,removeProduct}){
     return (
       <div>
         <div>
@@ -80,7 +102,8 @@ export default class Main extends React.Component {
         <div> {
           products.map(product => {
             return <ul>
-              <li key={product.id}>{product.name}</li>
+                <li key={product.id}>{product.name}</li>
+                <button onClick={()=> removeProduct(product.id)}>x</button>
               </ul>
           })}
         </div>
@@ -97,7 +120,10 @@ export default class Main extends React.Component {
           {this.state.selectedCategory.id ? <this.SelectedCategory category={this.state.selectedCategory} /> : <this.Categories categories={this.state.categories} selected={this.selected}/>}
         </div>
         <div>
-          <this.Products products={this.state.products} />
+          <this.Products products={this.state.products} removeProduct={this.removeProduct} />
+        </div>
+        <div>
+          <button onClick={()=> this.addProduct('Big Mac')}>Supersize Me</button>
         </div>
       </div>
 
